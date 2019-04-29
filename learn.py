@@ -37,12 +37,12 @@ def create_train_data():
     #    images1.append(image)
     #    labels1.append(label)
 
-
-    return (np.array(images)/255).reshape(-1, SIZE, SIZE, 1), to_categorical(labels)
+    
+    return train_test_split((np.array(images)/255).reshape(-1, SIZE, SIZE, 1), to_categorical(labels), test_size=0.2)
 
 
 print("Loading Dataset...")
-x_train, y_train = create_train_data()
+x_train, y_train, x_test, y_test = create_train_data()
 
 print("x_train shape: {}\ny_train shape: {}".format(x_train.shape, y_train.shape))
 
