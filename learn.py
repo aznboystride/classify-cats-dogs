@@ -11,6 +11,7 @@ from keras.layers.advanced_activations import LeakyReLU
 from PIL import Image
 from tqdm import tqdm
 import cv2, os
+from helper import create_train_data
 
 batch_size = 64
 epochs = 10
@@ -20,34 +21,10 @@ TRAIN_DIR = "/Users/Pey/Downloads/train"
 TEST_DIR  = "/Users/Pey/Downloads/test"
 SIZE = 150
 
-def create_train_data():
-    images = []
-    labels = []
-    images1= []
-    labels1= []
-    for file in os.listdir(TRAIN_DIR):
-        label = 0 if file.split('.')[0] == 'cat' else 1
-        image = cv2.resize(cv2.imread(os.path.join(TRAIN_DIR,file), cv2.IMREAD_GRAYSCALE), (SIZE, SIZE))
-        images.append(image)
-        labels.append(label)
-  
-    #for file in os.listdir(TEST_DIR):
-    #    label = 0 if file.split('.')[0] == 'cat' else 1
-    #    image = cv2.resize(cv2.imread(os.path.join(TEST_DIR,file), cv2.IMREAD_GRAYSCALE), (SIZE, SIZE))
-    #    images1.append(image)
-    #    labels1.append(label)
-
-    
-    return train_test_split((np.array(images)/255).reshape(-1, SIZE, SIZE, 1), to_categorical(labels), test_size=0.2)
-
 
 print("Loading Dataset...")
-x_train, y_train, x_test, y_test = create_train_data()
+x_train, y_train, x_test, y_test = create_train_data(TRAIN_DIR)
 
-print("x_train shape: {}\ny_train shape: {}".format(x_train.shape, y_train.shape))
+print("x_train shape: {}\ny_train shape: {}\nx_test.shape: {}\ny_test.shape: {}".format(x_train.shape, y_train.shape, x_test.shape, y_test.shape))
 
-
-
-
-
-    
+ 
