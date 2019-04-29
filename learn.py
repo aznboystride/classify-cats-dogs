@@ -23,6 +23,7 @@ SIZE = 150
 
 
 print("Loading Dataset...")
+
 x_train, y_train, x_test, y_test = create_train_data(TRAIN_DIR)
 
 print("x_train shape: {}\ny_train shape: {}\nx_test.shape: {}\ny_test.shape: {}".format(x_train.shape, y_train.shape, x_test.shape, y_test.shape))

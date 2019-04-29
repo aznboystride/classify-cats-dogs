@@ -2,6 +2,8 @@ from tqdm import tqdm
 import os
 import cv2
 import numpy as np
+from sklearn.model_selection import train_test_split
+from keras.utils import to_categorical
 
 def create_train_data(TRAIN_DIR, SIZE=150):
     images = []
