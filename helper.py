@@ -2,7 +2,8 @@ from tqdm import tqdm
 import os
 import cv2
 import numpy as np
-from sklearn.model_selection import train_test_split
+from random import randrange
+#from sklearn.model_selection import train_test_split
 from keras.utils import to_categorical
 
 def create_train_data(TRAIN_DIR, SIZE=150):
@@ -11,19 +12,15 @@ def create_train_data(TRAIN_DIR, SIZE=150):
         "x_test.npy" in dirs and "y_test.npy" in dirs: 
         return np.load(".data-set/x_train.npy"), np.load(".data-set/y_train.npy"), np.load(".data-set/x_test.npy"), np.load(".data-set/y_test.npy")
  
-    images = []
-    labels = []
-    
+    feature_labels = []
+
     for file in tqdm(os.listdir(TRAIN_DIR)):
         label = 0 if file.split('.')[0] == 'cat' else 1
-        image = cv2.resize(cv2.imread(os.path.join(TRAIN_DIR,file), cv2.IMREAD_GRAYSCALE), (SIZE, SIZE))
-        images.append(image)
-        labels.append(label)
-    images = (np.array(images)/255).reshape(-1, SIZE, SIZE, 1)
-    labels = to_categorical(labels)
-    data = train_test_split(images, labels, test_size=0.2)
+        image = cv2.resize(cv2.imread(os.path.join(TRAIN_DIR,file)), (SIZE, SIZE))
+        feature_labels.append([image, label])
     
-    print("Saving data where needed")
+    data = train_test_split(feature_labels, SIZE, test_size=0.2) 
+    #print("Saving data where needed")
  
     #if "x_train.npy" not in dirs: np.save(".data-set/x_train.npy", data[0])
     #if "y_train.npy" not in dirs: np.save(".data-set/y_train.npy", data[1])
@@ -32,5 +29,15 @@ def create_train_data(TRAIN_DIR, SIZE=150):
 
     return data
 
-
-  
+def train_test_split(feature_labels, SIZE, test_size=0.2):
+    data = [] 
+    train_size = (1-test_size) * len(feature_labels)
+    while len(data) < train_size:
+        index = randrange(len(feature_labels))
+        data.append(feature_labels.pop(index))
+    x_train = [x[0] for x in data]
+    y_train = [x[1] for x in data]
+    x_test = [x[0] for x in feature_labels]
+    y_test = [x[1] for x in feature_labels]
+    
+    return (np.array(x_train)/255).reshape(-1, SIZE, SIZE, 3), (np.array(x_test)/255).reshape(-1, SIZE, SIZE, 3), to_categorical(y_train), to_categorical(y_test)

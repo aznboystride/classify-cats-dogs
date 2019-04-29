@@ -18,45 +18,60 @@ epochs = 10
 num_classes = 2
 
 TRAIN_DIR = "../train"
-SIZE = 227
+SIZE = 224
 
 
 print("Loading Dataset...")
 
-x_train, y_train, x_test, y_test = create_train_data(TRAIN_DIR, SIZE)
+x_train, x_test, y_train, y_test = create_train_data(TRAIN_DIR, SIZE)
 
 print("x_train shape: {}\ny_train shape: {}\nx_test.shape: {}\ny_test.shape: {}".format(x_train.shape, y_train.shape, x_test.shape, y_test.shape))
+
 
 print("\nCreating convolutional neural network...")
 
 model = Sequential()
-model.add(Conv2D(filters=96, kernel_size=(11,11), input_shape=(SIZE, SIZE, 1), padding="valid", strides=(4,4)))
-model.add(LeakyReLU(alpha=.001))
+model.add(Conv2D(filters=96, kernel_size=(11,11), input_shape=(224, 224, 3), padding="valid", strides=(4,4)))
+model.add(Activation("relu"))
 model.add(MaxPooling2D(pool_size=(2,2), strides=(2,2), padding='valid'))
+model.add(BatchNormalization())
 model.add(Conv2D(filters=256, kernel_size=(11,11), strides=(1,1), padding='valid'))
-model.add(LeakyReLU(alpha=.001))
+model.add(Activation("relu"))
 model.add(MaxPooling2D(pool_size=(2,2), strides=(2,2), padding='valid'))
+model.add(BatchNormalization())
 model.add(Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), padding='valid'))
-model.add(LeakyReLU(alpha=.001))
+model.add(Activation("relu"))
+model.add(BatchNormalization())
 model.add(Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), padding='valid'))
-model.add(LeakyReLU(alpha=.001))
+model.add(Activation("relu"))
+model.add(BatchNormalization())
 model.add(Conv2D(filters=256, kernel_size=(3,3), strides=(1,1), padding='valid'))
-model.add(LeakyReLU(alpha=.001))
+model.add(Activation("relu"))
 model.add(MaxPooling2D(pool_size=(2,2), strides=(2,2), padding='valid'))
+model.add(BatchNormalization())
 model.add(Flatten())
 model.add(Dense(4096, input_shape=(224*224*3,)))
-model.add(LeakyReLU(alpha=.001))
+model.add(Activation("relu"))
 model.add(Dropout(0.4))
+model.add(BatchNormalization())
 model.add(Dense(4096))
-model.add(LeakyReLU(alpha=.001))
+model.add(Activation("relu"))
 model.add(Dropout(0.4))
-
+model.add(BatchNormalization())
 model.add(Dense(1000))
-model.add(LeakyReLU(alpha=.001))
+model.add(Activation("relu"))
 model.add(Dropout(0.4))
-model.add(Dense(17))
+model.add(BatchNormalization())
+model.add(Dense(2))
 model.add(Activation('softmax'))
 
-print("Model summary: {}".format(model.summary()))
+model.summary()
 
+print("Compiling model...")
+
+model.compile(loss=keras.losses.categorical_crossentropy, optimizer="adam", metrics=["accuracy"])
+
+print("Training model...")
+
+model.fit(x_train, y_train, validation_split=.25, epochs=epochs)
 
