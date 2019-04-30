@@ -3,12 +3,11 @@ import numpy as np
 from keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 import keras
-from keras.models import Sequential,Input,Model
+from keras.models import Sequential,Input,Model,model_from_json
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D, Activation
 from keras.layers.normalization import BatchNormalization
 from keras.layers.advanced_activations import LeakyReLU
-from PIL import Image
 from tqdm import tqdm
 import cv2, os
 from helper import create_train_data
@@ -75,3 +74,10 @@ print("Training model...")
 
 model.fit(x_train, y_train, validation_split=.25, epochs=epochs)
 
+print("Saving the model...")
+model_json = model.to_json()
+with open("model.json", "w") as fp:
+    fp.write(model_json)
+
+model.save_weights("model.h5")
+print("Model saved to disk")

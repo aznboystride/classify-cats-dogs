@@ -30,7 +30,7 @@ def create_train_data(TRAIN_DIR, SIZE=150):
     return data
 
 def train_test_split(feature_labels, SIZE, test_size=0.2):
-    data = [] 
+    data = []
     train_size = (1-test_size) * len(feature_labels)
     while len(data) < train_size:
         index = randrange(len(feature_labels))
@@ -39,5 +39,10 @@ def train_test_split(feature_labels, SIZE, test_size=0.2):
     y_train = [x[1] for x in data]
     x_test = [x[0] for x in feature_labels]
     y_test = [x[1] for x in feature_labels]
-    
-    return (np.array(x_train)/255).reshape(-1, SIZE, SIZE, 3), (np.array(x_test)/255).reshape(-1, SIZE, SIZE, 3), to_categorical(y_train), to_categorical(y_test)
+    print("Memory Before: {}".format(os.system('free -m')))
+    x_train = (np.array(x_train)/255).reshape(-1, SIZE, SIZE, 3)
+    x_test = (np.array(x_test)/255).reshape(-1, SIZE, SIZE, 3)
+    y_train = to_categorical(y_train)
+    y_test = to_categorical(y_test)
+
+    return x_train, x_test, y_train, y_test
